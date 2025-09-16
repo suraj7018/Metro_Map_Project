@@ -610,12 +610,15 @@ int main()
 
         case 3:
         {
-            vector<string> keys = g.printCodelist();
-            cout << "\n1. TO ENTER SERIAL NO. OF STATIONS\n2. TO ENTER CODE OF STATIONS\n3. TO ENTER NAME OF STATIONS\n" << endl;
-            cout << "ENTER YOUR CHOICE:";
+            vector<string> stationNames;
+            for (auto it = Graph_M::vtces.begin(); it != Graph_M::vtces.end(); ++it) {
+                stationNames.push_back(it->first);
+            }
+
+            cout << "\n1. TO ENTER SERIAL NO. OF STATIONS\n2. TO ENTER NAME OF STATIONS\n" << endl;
+            cout << "ENTER YOUR CHOICE: ";
             int ch;
             cin >> ch;
-            int j;
 
             string st1 = "", st2 = "";
             cout << "ENTER THE SOURCE AND DESTINATION STATIONS" << endl;
@@ -623,29 +626,14 @@ int main()
             {
                 int s1, s2;
                 cin >> s1 >> s2;
-                st1 = keys[s1 - 1];
-                st2 = keys[s2 - 1];
+                if (s1 < 1 || s1 > stationNames.size() || s2 < 1 || s2 > stationNames.size()) {
+                    cout << "THE INPUTS ARE INVALID" << endl;
+                    break;
+                }
+                st1 = stationNames[s1 - 1];
+                st2 = stationNames[s2 - 1];
             }
             else if (ch == 2)
-            {
-                string a, b;
-                cin >> a >> b;
-                a = a.substr(0, 2);
-                b = b.substr(0, 2);
-                for (j = 0; j < keys.size(); j++)
-                {
-                    if (a == keys[j])
-                        break;
-                }
-                st1 = keys[j];
-                for (j = 0; j < keys.size(); j++)
-                {
-                    if (b == keys[j])
-                        break;
-                }
-                st2 = keys[j];
-            }
-            else if (ch == 3)
             {
                 cin.ignore();
                 getline(cin, st1);
@@ -654,7 +642,7 @@ int main()
             else
             {
                 cout << "Invalid choice" << endl;
-                return 0;
+                break;
             }
 
             unordered_map<string, bool> processed;
@@ -667,25 +655,85 @@ int main()
 
         case 4:
         {
-            string sat1, sat2;
-            cout << "ENTER THE SOURCE STATION: ";
-            cin.ignore();
-            getline(cin, sat1);
-            cout << "ENTER THE DESTINATION STATION: ";
-            getline(cin, sat2);
+            vector<string> stationNames;
+            for (auto it = Graph_M::vtces.begin(); it != Graph_M::vtces.end(); ++it) {
+                stationNames.push_back(it->first);
+            }
 
-            unordered_map<string, bool> processed1;
-            cout << "SHORTEST TIME FROM (" << sat1 << ") TO (" << sat2 << ") IS " << g.dijkstra(sat1, sat2, true) / 60 << " MINUTES" << endl;
+            cout << "\n1. TO ENTER SERIAL NO. OF STATIONS\n2. TO ENTER NAME OF STATIONS\n" << endl;
+            cout << "ENTER YOUR CHOICE: ";
+            int ch;
+            cin >> ch;
+
+            string st1 = "", st2 = "";
+            cout << "ENTER THE SOURCE AND DESTINATION STATIONS" << endl;
+            if (ch == 1)
+            {
+                int s1, s2;
+                cin >> s1 >> s2;
+                if (s1 < 1 || s1 > stationNames.size() || s2 < 1 || s2 > stationNames.size()) {
+                    cout << "THE INPUTS ARE INVALID" << endl;
+                    break;
+                }
+                st1 = stationNames[s1 - 1];
+                st2 = stationNames[s2 - 1];
+            }
+            else if (ch == 2)
+            {
+                cin.ignore();
+                getline(cin, st1);
+                getline(cin, st2);
+            }
+            else
+            {
+                cout << "Invalid choice" << endl;
+                break;
+            }
+
+            unordered_map<string, bool> processed;
+            if (!g.containsVertex(st1) || !g.containsVertex(st2) || !g.hasPath(st1, st2, processed))
+                cout << "THE INPUTS ARE INVALID" << endl;
+            else
+                cout << "SHORTEST TIME FROM (" << st1 << ") TO (" << st2 << ") IS " << g.dijkstra(st1, st2, true) / 60 << " MINUTES" << endl;
             break;
         }
 
         case 5:
         {
-            string s1, s2;
+            vector<string> stationNames;
+            for (auto it = Graph_M::vtces.begin(); it != Graph_M::vtces.end(); ++it) {
+                stationNames.push_back(it->first);
+            }
+
+            cout << "\n1. TO ENTER SERIAL NO. OF STATIONS\n2. TO ENTER NAME OF STATIONS\n" << endl;
+            cout << "ENTER YOUR CHOICE: ";
+            int ch;
+            cin >> ch;
+
+            string s1 = "", s2 = "";
             cout << "ENTER THE SOURCE AND DESTINATION STATIONS" << endl;
-            cin.ignore();
-            getline(cin, s1);
-            getline(cin, s2);
+            if (ch == 1)
+            {
+                int idx1, idx2;
+                cin >> idx1 >> idx2;
+                if (idx1 < 1 || idx1 > stationNames.size() || idx2 < 1 || idx2 > stationNames.size()) {
+                    cout << "THE INPUTS ARE INVALID" << endl;
+                    break;
+                }
+                s1 = stationNames[idx1 - 1];
+                s2 = stationNames[idx2 - 1];
+            }
+            else if (ch == 2)
+            {
+                cin.ignore();
+                getline(cin, s1);
+                getline(cin, s2);
+            }
+            else
+            {
+                cout << "Invalid choice" << endl;
+                break;
+            }
 
             unordered_map<string, bool> processed2;
             if (!g.containsVertex(s1) || !g.containsVertex(s2) || !g.hasPath(s1, s2, processed2))
@@ -697,25 +745,53 @@ int main()
                 cout << "SOURCE STATION : " << s1 << endl;
                 cout << "DESTINATION STATION : " << s2 << endl;
                 cout << "DISTANCE : " << str[len - 1] << endl;
-                cout << "NUMBER OF INTERCHANGES : " << str[len - 2] << endl;
                 cout << "~~~~~~~~~~~~~" << endl;
                 cout << "START  ==>  " << str[0] << endl;
-                for (int i = 1; i < len - 3; i++)
+                for (int i = 1; i < len - 1; i++)
                 {
                     cout << str[i] << endl;
                 }
-                cout << str[len - 3] << "   ==>    END";
+                cout << str[len - 2] << "   ==>    END";
             }
             break;
         }
 
         case 6:
         {
-            string s1, s2;
+            vector<string> stationNames;
+            for (auto it = Graph_M::vtces.begin(); it != Graph_M::vtces.end(); ++it) {
+                stationNames.push_back(it->first);
+            }
+
+            cout << "\n1. TO ENTER SERIAL NO. OF STATIONS\n2. TO ENTER NAME OF STATIONS\n" << endl;
+            cout << "ENTER YOUR CHOICE: ";
+            int ch;
+            cin >> ch;
+
+            string s1 = "", s2 = "";
             cout << "ENTER THE SOURCE AND DESTINATION STATIONS" << endl;
-            cin.ignore();
-            getline(cin, s1);
-            getline(cin, s2);
+            if (ch == 1)
+            {
+                int idx1, idx2;
+                cin >> idx1 >> idx2;
+                if (idx1 < 1 || idx1 > stationNames.size() || idx2 < 1 || idx2 > stationNames.size()) {
+                    cout << "THE INPUTS ARE INVALID" << endl;
+                    break;
+                }
+                s1 = stationNames[idx1 - 1];
+                s2 = stationNames[idx2 - 1];
+            }
+            else if (ch == 2)
+            {
+                cin.ignore();
+                getline(cin, s1);
+                getline(cin, s2);
+            }
+            else
+            {
+                cout << "Invalid choice" << endl;
+                break;
+            }
 
             unordered_map<string, bool> processed2;
             if (!g.containsVertex(s1) || !g.containsVertex(s2) || !g.hasPath(s1, s2, processed2))
@@ -725,16 +801,15 @@ int main()
                 vector<string> str = g.get_Interchanges(g.Get_Minimum_Time(s1, s2));
                 int len = str.size();
                 cout << "SOURCE STATION : " << s1 << endl;
-                cout << "SOURCE STATION : " << s2 << endl;
+                cout << "DESTINATION STATION : " << s2 << endl;
                 cout << "TIME : " << str[len - 1] << " MINUTES" << endl;
-                cout << "NUMBER OF INTERCHANGES : " << str[len - 2] << endl;
                 cout << "~~~~~~~~~~~~~" << endl;
                 cout << "START  ==>  " << str[0] << endl;
-                for (int i = 1; i < len - 3; i++)
+                for (int i = 1; i < len - 1; i++)
                 {
                     cout << str[i] << endl;
                 }
-                cout << str[len - 3] << "   ==>    END";
+                cout << str[len - 2] << "   ==>    END";
             }
             break;
         }
